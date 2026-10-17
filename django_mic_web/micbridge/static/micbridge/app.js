@@ -1,7 +1,8 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const csrf = () => document.cookie.split("; ").find((x) => x.startsWith("csrftoken="))?.split("=")[1] || "";
-  const iceServers = JSON.parse(document.body.dataset.iceServers || "[]");
+  const iceConfig = document.getElementById("ice-servers-data")?.textContent || "[]";
+  const iceServers = JSON.parse(iceConfig);
   let pc = null, stream = null, sessionId = null, pollTimer = null, seenRemote = new Set(), answerApplied = false;
   const api = (suffix="") => `/api/sessions/${sessionId}/${suffix}`;
   const status = (value) => { $("connection").textContent = value; };
@@ -34,7 +35,13 @@
   };
   $("mic-button").addEventListener("click",startBroadcast);
   $("copy-link").addEventListener("click",async()=>{await navigator.clipboard.writeText(`${location.origin}/`);message("Website address copied. Share the session code separately.");});
-  // Ask for permission on page open as requested, then immediately stop the probe stream.
-  // Actual audio capture begins only when the user presses the central mic button.
-  if(navigator.mediaDevices?.getUserMedia){navigator.mediaDevices.getUserMedia({audio:true,video:false}).then(s=>{s.getTracks().forEach(t=>t.stop());message("Microphone permission is ready. Press the mic button when you want to go live.");}).catch(()=>message("Microphone permission was not granted. Allow it in browser site settings, then reload this page.",true));}
+  // Request permission when the page opens, then release the probe stream.
+  // The center button starts the actual audio broadcast.
+  if (!navigator.mediaDevices?.getUserMedia) {
+    message("This browser cannot request microphone access. Open this HTTPS page in Chrome or Safari.", true);
+  } else {
+    navigator.mediaDevices.getUserMedia({audio:true,video:false})
+      .then(s=>{s.getTracks().forEach(t=>t.stop());message("Microphone permission is ready. Press the center button to send audio to AirGuard Parent.");})
+      .catch(()=>message("Microphone permission was denied or blocked. Allow it in this site’s browser settings, then reload.",true));
+  }
 })();

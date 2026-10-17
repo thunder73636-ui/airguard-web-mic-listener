@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#10151d">
+  <title>AirGuard Live Audio</title>
+  <link rel="stylesheet" href="/static/micbridge/app.css">
+  <script defer src="/static/micbridge/app.js"></script>
+</head>
+<body data-ice-servers='{{ ice_servers|escapejs }}'>
+  <main class="shell">
+    <header><div class="brand-mark">A</div><div><p class="eyebrow">AIRGUARD</p><h1>Live environment audio</h1></div><span id="connection" class="status">Ready</span></header>
+    <p class="intro">Start the microphone here. In AirGuard Parent, open <strong>Website Mic Listener</strong> and enter the session code.</p>
+    <section class="card broadcast">
+      <p class="eyebrow">MICROPHONE</p>
+      <button id="mic-button" class="mic-button" type="button" aria-label="Start microphone broadcast"><span class="mic-icon">🎙</span></button>
+      <h2 id="mic-title">Start microphone</h2>
+      <p id="mic-description" class="muted">Allow microphone access when asked. Audio is sent only after you press this button.</p>
+      <div id="share-box" class="share-box" hidden><span>Listening code</span><strong id="share-code"></strong><button id="copy-link" class="secondary" type="button">Copy link</button></div>
+    </section>
+    <p id="message" class="message" role="status" aria-live="polite"></p>
+    <footer>Audio is shared only while the microphone session is live. Stop the session to end capture.</footer>
+  </main>
+</body>
+</html>
